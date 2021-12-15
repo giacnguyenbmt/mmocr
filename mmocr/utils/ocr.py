@@ -3,6 +3,7 @@
 import copy
 import os
 import warnings
+import gdown
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
@@ -183,14 +184,18 @@ class MMOCR:
                 'dbnet/dbnet_r18_fpnc_1200e_icdar2015.py',
                 'ckpt':
                 'dbnet/'
-                'dbnet_r18_fpnc_sbn_1200e_icdar2015_20210329-ba3ab597.pth'
+                # 'dbnet_r18_fpnc_sbn_1200e_icdar2015_20210329-ba3ab597.pth'
+                'dbnet_r18_fpnc_sbn_1200e_vbc583_20221215.pth',
+                'id': '1bnr4eGev9MMuyHmieZl6RzfQDxm4uaN7'
             },
             'DB_r50': {
                 'config':
                 'dbnet/dbnet_r50dcnv2_fpnc_1200e_icdar2015.py',
                 'ckpt':
                 'dbnet/'
-                'dbnet_r50dcnv2_fpnc_sbn_1200e_icdar2015_20211025-9fe3b590.pth'
+                # 'dbnet_r50dcnv2_fpnc_sbn_1200e_icdar2015_20211025-9fe3b590.pth'
+                'dbnet_r50_fpnc_sbn_1200e_vbc583_20221215.pth',
+                'id': '1ZVAgiuCCCk---hq1zhut4JVZPtyySVVR'
             },
             'DRRG': {
                 'config':
@@ -223,7 +228,9 @@ class MMOCR:
                 'maskrcnn/mask_rcnn_r50_fpn_160e_icdar2015.py',
                 'ckpt':
                 'maskrcnn/'
-                'mask_rcnn_r50_fpn_160e_icdar2015_20210219-8eb340a3.pth'
+                # 'mask_rcnn_r50_fpn_160e_icdar2015_20210219-8eb340a3.pth'
+                'mask_rcnn_r50_fpn_160e_vbc583_20221215.pth',
+                'id': '1OORE_McZJCucjDFN68AzXacC3YdfuDYP'
             },
             'MaskRCNN_IC17': {
                 'config':
@@ -244,7 +251,9 @@ class MMOCR:
                 'panet/panet_r18_fpem_ffm_600e_icdar2015.py',
                 'ckpt':
                 'panet/'
-                'panet_r18_fpem_ffm_sbn_600e_icdar2015_20210219-42dbe46a.pth'
+                # 'panet_r18_fpem_ffm_sbn_600e_icdar2015_20210219-42dbe46a.pth'
+                'panet_r18_fpem_ffm_sbn_600e_vbc583_20221215.pth',
+                'id': '1_J3jWRoPvh-em0HGR8kGCzRx-TkQP_Px'
             },
             'PS_CTW': {
                 'config': 'psenet/psenet_r50_fpnf_600e_ctw1500.py',
@@ -255,7 +264,9 @@ class MMOCR:
                 'config':
                 'psenet/psenet_r50_fpnf_600e_icdar2015.py',
                 'ckpt':
-                'psenet/psenet_r50_fpnf_600e_icdar2015_pretrain-eefd8fe6.pth'
+                # 'psenet/psenet_r50_fpnf_600e_icdar2015_pretrain-eefd8fe6.pth'
+                'psenet_r50_fpnf_600e_vbc583_201215.pth',
+                'id': '15Swr8x6hun8CTgFvIpAVyy9OeXfgraFA'
             },
             'TextSnake': {
                 'config':
@@ -355,6 +366,14 @@ class MMOCR:
             if not det_ckpt:
                 det_ckpt = 'https://download.openmmlab.com/mmocr/textdet/' + \
                     textdet_models[self.td]['ckpt']
+                ckpt_name = textdet_models[self.td]['ckpt'].split('/')[-1]
+                base_url = 'https://drive.google.com/uc?id='
+                base_output_dir = '/root/.cache/torch/hub/checkpoints/'
+                if not os.path.isdir(base_output_dir):
+                    os.makedirs(base_output_dir)
+                url = base_url + textdet_models[self.td]['id']
+                output_dir = base_output_dir + ckpt_name
+                gdown.download(url, output_dir, quiet=False)
 
             self.detect_model = init_detector(
                 det_config, det_ckpt, device=self.device)
